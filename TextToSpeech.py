@@ -1,3 +1,4 @@
+# Import necessary modules from Kivy library
 import kivy
 from kivy.app import App
 from kivy.uix.boxlayout import BoxLayout
@@ -9,11 +10,15 @@ from kivy.uix.image import Image
 from kivy.uix.slider import Slider
 from kivy.core.window import Window
 from kivy.graphics import Color, Rectangle
+
+# Import the text-to-speech library
 import pyttsx3
 import threading
 
+# Create a class for text-to-voice functionality
 class TextToVoice:
     def __init__(self, lang='en', voice_id=None):
+        # Initialize the text-to-speech engine
         self.engine = pyttsx3.init()
         self.lang = lang
         self.voice_id = voice_id
@@ -21,16 +26,19 @@ class TextToVoice:
         self.is_stopped = False  # Flag to indicate if audio playback is stopped
 
     def set_language_and_voice(self):
+        # Set the language and voice for the text-to-speech engine
         if self.lang:
             self.engine.setProperty('language', self.lang)
         if self.voice_id:
             self.engine.setProperty('voice', self.voice_id)
 
     def set_speech_rate(self, rate):
+        # Set the speech rate (words per minute) for the text-to-speech engine
         self.engine.setProperty('rate', rate)
 
     def text_to_voice(self, text):
         try:
+            # Convert the given text to voice and wait for completion
             self.engine.say(text)
             self.engine.runAndWait()
         except RuntimeError:
@@ -40,9 +48,11 @@ class TextToVoice:
         self.is_stopped = True
 
     def stop_voice(self):
+        # Stop the ongoing voice playback
         if not self.is_stopped:
             self.engine.stop()
 
+# Create the main application class inheriting from Kivy's App class
 class TextToSpeechApp(App):
     def build(self):
         Window.size = (450, 640)
@@ -91,28 +101,35 @@ class TextToSpeechApp(App):
         return self.layout
 
     def on_play_button_press(self, instance):
+        # Handle the "Play" button press event
         text = self.text_input.text.strip()
         if text:
             self.is_playing = True
             self.text_to_voice.is_stopped = False  # Reset the flag before playing
             self.text_to_voice.set_speech_rate(self.speech_rate)
+            # Start text-to-voice conversion in a separate thread to prevent freezing the UI
             threading.Thread(target=self.text_to_voice.text_to_voice, args=(text,)).start()
             self.is_playing = False
         else:
             self.show_popup("Error", "Please enter some text.")
 
     def on_exit_button_press(self, instance):
-        App.get_running_app().stop()
+        # Handle the "Exit" button press event
+        self.text_to_voice.stop_voice()  # Stop the voice playback
+        App.get_running_app().stop()  # Close the Kivy application
 
     def on_speed_slider_value_change(self, instance, value):
+        # Handle the speed slider value change event
         self.speech_rate = value
 
     def show_popup(self, title, content):
+        # Display a popup with the given title and content
         popup_layout = BoxLayout(orientation='vertical')
         popup_label = Label(text=content)
         popup_layout.add_widget(popup_label)
         popup = Popup(title=title, content=popup_layout, size_hint=(0.6, 0.3))
         popup.open()
 
+# Run the application if this script is executed directly
 if __name__ == "__main__":
     TextToSpeechApp().run()
