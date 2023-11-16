@@ -1,4 +1,4 @@
-# Text-to-Speech App with Kivy and pyttsx3
+# TextToSpeech
 
 ## Description
 
@@ -17,9 +17,9 @@ This is a simple text-to-speech (TTS) application built using the Kivy framework
 - Kivy library (`pip install kivy`)
 - pyttsx3 library (`pip install pyttsx3`)
 
-## How to Use
+## License
 
-1. Clone this repository to your local machine using `git clone https://github.com/your_username/your_repository.git`.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 2. Install the required libraries by running `pip install -r requirements.txt`.
 3. Run the application using `python main.py`.
 4. Enter the desired text into the input field.
